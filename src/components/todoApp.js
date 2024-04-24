@@ -84,6 +84,8 @@ export default function TodoApp() {
               item={item}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
+              todos={todos} // Pasar todos como prop al componente Todo
+              setTodos={setTodos} // Pasar la función setTodos como prop al componente Todo
             />
           ))}
         </div>

@@ -1,3 +1,4 @@
+//custom Hook
 import React, { useState } from "react";
 
 function useLocalStorage(key, initialValue) {

@@ -1,28 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Modal from "./modal";
 
-export default function Todo({ item, onUpdate, onDelete }) {
+export default function Todo({ item, onUpdate, onDelete, todos, setTodos }) {
   const [isEdit, setIsEdit] = useState(false);
   const [newValue, setNewValue] = useState(item.title);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [todos, setTodos] = useState([]);
-
-  useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem("todos")); // Obtener los todos almacenados en localStorage
-    if (storedTodos) {
-      setTodos(storedTodos);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos)); // Guardar los todos en localStorage
-  }, [todos]);
 
   function handleSubmit(e) {
-    e.preventDefault(); // anula el efecto de recargar la página cuando se envía el formulario
+    e.preventDefault();
 
-    // Validar que el título tenga al menos dos caracteres
     if (newValue.trim().length < 3) {
       setIsEditModalOpen(true);
       return;
@@ -41,17 +28,17 @@ export default function Todo({ item, onUpdate, onDelete }) {
   }
 
   function handleDelete() {
-    setIsDeleteModalOpen(true); // Abre el modal de confirmación
+    setIsDeleteModalOpen(true);
   }
 
   function handleConfirmDelete() {
     const filteredTodos = todos.filter((todo) => todo.id !== item.id);
     setTodos(filteredTodos);
-    setIsDeleteModalOpen(false); // Cierra el modal después de confirmar la eliminación
+    setIsDeleteModalOpen(false);
   }
 
   function handleCancelDelete() {
-    setIsDeleteModalOpen(false); // Cierra el modal si el usuario cancela la eliminación
+    setIsDeleteModalOpen(false);
   }
 
   function TodoElement() {
