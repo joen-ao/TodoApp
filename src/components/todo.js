@@ -1,11 +1,23 @@
-import { useState } from "react";
-import Modal from "./modal"; // Asegúrate de tener un componente Modal disponible en tu proyecto
+import { useState, useEffect } from "react";
+import Modal from "./modal";
 
 export default function Todo({ item, onUpdate, onDelete }) {
   const [isEdit, setIsEdit] = useState(false);
   const [newValue, setNewValue] = useState(item.title);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos")); // Obtener los todos almacenados en localStorage
+    if (storedTodos) {
+      setTodos(storedTodos);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos)); // Guardar los todos en localStorage
+  }, [todos]);
 
   function handleSubmit(e) {
     e.preventDefault(); // anula el efecto de recargar la página cuando se envía el formulario
@@ -16,7 +28,10 @@ export default function Todo({ item, onUpdate, onDelete }) {
       return;
     }
 
-    onUpdate(item.id, newValue);
+    const updatedTodos = todos.map((todo) =>
+      todo.id === item.id ? { ...todo, title: newValue } : todo
+    );
+    setTodos(updatedTodos);
     setIsEdit(false);
   }
 
@@ -30,7 +45,8 @@ export default function Todo({ item, onUpdate, onDelete }) {
   }
 
   function handleConfirmDelete() {
-    onDelete(item.id);
+    const filteredTodos = todos.filter((todo) => todo.id !== item.id);
+    setTodos(filteredTodos);
     setIsDeleteModalOpen(false); // Cierra el modal después de confirmar la eliminación
   }
 

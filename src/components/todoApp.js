@@ -1,22 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Todo from "./todo";
 import "./todoApp.css";
 import Modal from "./modal";
 
 export default function TodoApp() {
-  const [title, setTitle] = useState(""); //Se declara un estado title que representa el valor del campo de entrada del título de la tarea.
-  const [todos, setTodos] = useState([]); //  Se declara un estado todos que representa la lista de tareas(Todos).
+  const [title, setTitle] = useState(""); // Se declara un estado title que representa el valor del campo de entrada del título de la tarea.
+  const [todos, setTodos] = useState(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    return storedTodos || [];
+  }); // Se declara un estado todos que representa la lista de tareas (Todos).
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  function handleChange(event) {
-    //Actualiza el estado title cuando el usuario escribe en el campo de entrada.
-    const value = event.target.value;
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
+  function handleChange(event) {
+    // Actualiza el estado title cuando el usuario escribe en el campo de entrada.
+    const value = event.target.value;
     setTitle(value);
   }
 
   function handleSubmit(e) {
-    //Maneja el envío del formulario para agregar una nueva tarea a la lista.
+    // Maneja el envío del formulario para agregar una nueva tarea a la lista.
     e.preventDefault();
 
     // Validar que el título tenga al menos dos caracteres
@@ -26,28 +32,28 @@ export default function TodoApp() {
     }
 
     const newTodo = {
-      //creando objeto de todo
-      id: crypto.randomUUID(),
+      // creando objeto de todo
+      id: Math.random().toString(36).substr(2, 9),
       title: title,
       completed: false,
     };
 
-    const temp = [...todos]; //copia el array todos
-    temp.unshift(newTodo); //unshift agrega un elemento al inicio de nuestro array
+    const temp = [...todos]; // copia el array todos
+    temp.unshift(newTodo); // unshift agrega un elemento al inicio de nuestro array
 
     setTodos(temp);
     setTitle("");
   }
 
   function handleUpdate(id, value) {
-    //Actualiza el título de una tarea existente en la lista.
+    // Actualiza el título de una tarea existente en la lista.
     const temp = [...todos];
     const item = temp.find((item) => item.id === id);
     item.title = value;
     setTodos(temp);
   }
 
-  function handleDelete(id, value) {
+  function handleDelete(id) {
     const temp = todos.filter((item) => item.id !== id);
     setTodos(temp);
   }
